@@ -11,7 +11,7 @@ Summary:        Small and embeddable Javascript engine
 Group:          Networking/WWW
 License:        MIT
 URL:            https://bellard.org/quickjs/
-Source0:        https://github.com/bellard/quickjs/archive/%{commit}.tar.gz
+Source0:        https://github.com/bellard/quickjs/archive/%{name}-%{commit}.tar.gz
 #Patch0:          0001-Set-build-flags.patch
 #Patch1:          0002-Fix-linking.patch
 #Patch2:          0003-Install-static-lib-to-usr-lib64-on-64-bit-arches.patch
