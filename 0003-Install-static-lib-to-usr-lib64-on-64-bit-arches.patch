@@ -1,0 +1,58 @@
+From 3e49dc134c525086360495b46dd92ee6f3fe506d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jani=20V=C3=A4limaa?= <wally@mageia.org>
+Date: Sat, 15 Nov 2025 18:11:19 +0200
+Subject: [PATCH] Install (static) lib to /usr/lib64 on 64 bit arches
+
+---
+ Makefile | 10 +++++-----
+ qjsc.c   |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 3f58c1d..924ad53 100644
+--- a/Makefile
++++ b/Makefile
+@@ -288,11 +288,11 @@ $(QJSC): $(OBJDIR)/qjsc.host.o \
+ 
+ endif #CROSS_PREFIX
+ 
+-QJSC_DEFINES:=-DCONFIG_CC=\"$(QJSC_CC)\" -DCONFIG_PREFIX=\"$(PREFIX)\"
++QJSC_DEFINES:=-DCONFIG_CC=\"$(QJSC_CC)\" -DCONFIG_PREFIX=\"$(PREFIX)\" -DCONFIG_LIBDIR=\"$(LIBDIR)\"
+ ifdef CONFIG_LTO
+ QJSC_DEFINES+=-DCONFIG_LTO
+ endif
+-QJSC_HOST_DEFINES:=-DCONFIG_CC=\"$(HOST_CC)\" -DCONFIG_PREFIX=\"$(PREFIX)\"
++QJSC_HOST_DEFINES:=-DCONFIG_CC=\"$(HOST_CC)\" -DCONFIG_PREFIX=\"$(PREFIX)\" -DCONFIG_LIBDIR=\"$(LIBDIR)\"
+ 
+ $(OBJDIR)/qjsc.o: CFLAGS+=$(QJSC_DEFINES)
+ $(OBJDIR)/qjsc.host.o: CFLAGS+=$(QJSC_HOST_DEFINES)
+@@ -375,10 +375,10 @@ install: all
+ 	mkdir -p "$(DESTDIR)$(PREFIX)/bin"
+ 	$(STRIP) qjs$(EXE) qjsc$(EXE)
+ 	install -m755 qjs$(EXE) qjsc$(EXE) "$(DESTDIR)$(PREFIX)/bin"
+-	mkdir -p "$(DESTDIR)$(PREFIX)/lib/quickjs"
+-	install -m644 libquickjs.a "$(DESTDIR)$(PREFIX)/lib/quickjs"
++	mkdir -p "$(DESTDIR)$(PREFIX)/${LIBDIR}/quickjs"
++	install -m644 libquickjs.a "$(DESTDIR)$(PREFIX)/${LIBDIR}/quickjs"
+ ifdef CONFIG_LTO
+-	install -m644 libquickjs.lto.a "$(DESTDIR)$(PREFIX)/lib/quickjs"
++	install -m644 libquickjs.lto.a "$(DESTDIR)$(PREFIX)/${LIBDIR}/quickjs"
+ endif
+ 	mkdir -p "$(DESTDIR)$(PREFIX)/include/quickjs"
+ 	install -m644 quickjs.h quickjs-libc.h "$(DESTDIR)$(PREFIX)/include/quickjs"
+diff --git a/qjsc.c b/qjsc.c
+index e55ca61..734a9ac 100644
+--- a/qjsc.c
++++ b/qjsc.c
+@@ -472,7 +472,7 @@ static int output_executable(const char *out_filename, const char *cfilename,
+         pstrcpy(lib_dir, sizeof(lib_dir), exe_dir);
+     } else {
+         snprintf(inc_dir, sizeof(inc_dir), "%s/include/quickjs", CONFIG_PREFIX);
+-        snprintf(lib_dir, sizeof(lib_dir), "%s/lib/quickjs", CONFIG_PREFIX);
++        snprintf(lib_dir, sizeof(lib_dir), "%s/%s/quickjs", CONFIG_PREFIX, CONFIG_LIBDIR);
+     }
+ 
+     lto_suffix = "";
+-- 
+2.51.2
+
