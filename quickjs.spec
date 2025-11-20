@@ -1,23 +1,20 @@
-%define ver     2025-
-%define commit  9688007ccbba2024b339ddcd52044b23e2a4d982
-%define gitdate 20251105
-
-%define rel	2
+%define ver     2025-11-15
+%define commit  fcbf5ea2a63510f35f9ab2baadd59781be16a167
+%define gitdate 20251115
 
 %define devname %mklibname -d %{name}
 
 Name:           quickjs
-Version:        2025.
-Release:        %mkrel %{?gitdate:-c 0git%{gitdate}} %{rel}
+Version:        2025.11.15
+Release:        1
 Summary:        Small and embeddable Javascript engine
 Group:          Networking/WWW
 License:        MIT
 URL:            https://bellard.org/quickjs/
 Source0:        https://github.com/bellard/quickjs/archive/%{commit}.tar.gz
-Patch:          0001-Set-build-flags.patch
-Patch:          0002-Fix-linking.patch
-Patch:          0003-Install-static-lib-to-usr-lib64-on-64-bit-arches.patch
-BuildRequires:  gcc
+#Patch0:          0001-Set-build-flags.patch
+#Patch1:          0002-Fix-linking.patch
+#Patch2:          0003-Install-static-lib-to-usr-lib64-on-64-bit-arches.patch
 BuildRequires:  make
 Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
@@ -35,7 +32,7 @@ Conflicts:      %{name} < 2025.09.13-0.0git20251105.2
 Development headers for quickjs
 
 %prep
-%autosetup -n %{name}-%{?gitdate:%commit}%{!?gitdate:%ver} -p1
+%autosetup -n quickjs-%{commit} -p1
 
 %build
 %make_build PREFIX=%{_prefix} LIBDIR=%{_lib} CONFIG_LTO=y
