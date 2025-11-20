@@ -16,7 +16,7 @@ Source0:        https://github.com/bellard/quickjs/archive/%{name}-%{commit}.tar
 #Patch1:          0002-Fix-linking.patch
 Patch2:          0003-Install-static-lib-to-usr-lib64-on-64-bit-arches.patch
 BuildRequires:  make
-Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
+#Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
 %description
 QuickJS is a small and embeddable JavaScript engine and compiler that supports reference ES2020.
@@ -25,8 +25,7 @@ QuickJS is a small and embeddable JavaScript engine and compiler that supports r
 Summary:        Development headers for quickjs
 Provides:       %{name}-devel = %{version}-%{release}
 Provides:       %{name}-devel%{?_isa} = %{version}-%{release}
-Obsoletes:      %{name}-devel < 2025.09.13-0.0git20251105.2
-Conflicts:      %{name} < 2025.09.13-0.0git20251105.2
+Requires:       %{name}  = %{version}-%{release}
 
 %description -n %{devname}
 Development headers for quickjs
