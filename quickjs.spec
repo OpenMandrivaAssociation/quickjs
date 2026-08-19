@@ -1,17 +1,15 @@
-%define ver     2025-11-15
-%define commit  fcbf5ea2a63510f35f9ab2baadd59781be16a167
-%define gitdate 20251115
-
 %define devname %mklibname -d %{name}
 
 Name:           quickjs
-Version:        2025.11.15
+Version:        2026.06.04
+# Upstream tarball uses hyphens: quickjs-2026-06-04.tar.xz
+%define ver %(echo %{version} | sed -e 's,\\.,-,g')
 Release:        1
 Summary:        Small and embeddable Javascript engine
 Group:          Networking/WWW
 License:        MIT
 URL:            https://bellard.org/quickjs/
-Source0:        https://github.com/bellard/quickjs/archive/%{name}-%{commit}.tar.gz
+Source0:        https://bellard.org/quickjs/quickjs-%{ver}.tar.xz
 #Patch0:          0001-Set-build-flags.patch
 #Patch1:          0002-Fix-linking.patch
 Patch2:          0003-Install-static-lib-to-usr-lib64-on-64-bit-arches.patch
@@ -19,7 +17,7 @@ BuildRequires:  make
 #Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
 %description
-QuickJS is a small and embeddable JavaScript engine and compiler that supports reference ES2020.
+QuickJS is a small and embeddable Javascript engine and compiler that supports reference ES2025.
 
 %package -n %{devname}
 Summary:        Development headers for quickjs
@@ -31,13 +29,17 @@ Requires:       %{name}  = %{version}-%{release}
 Development headers for quickjs
 
 %prep
-%autosetup -n quickjs-%{commit} -p1
+%autosetup -n quickjs-%{ver} -p1
 
 %build
-%make_build PREFIX=%{_prefix} LIBDIR=%{_lib} CONFIG_LTO=y
+# clang LTO so clang embedders can link; -fPIC for shared objects such as njs
+export CFLAGS="%{optflags} -fPIC"
+# example .so modules resolve JS_* from the host at load time
+export LDFLAGS="${LDFLAGS//-Wl,--no-undefined/}"
+%make_build PREFIX=%{_prefix} LIBDIR=%{_lib} CONFIG_CLANG=y CONFIG_LTO=y
 
 %install
-%make_install PREFIX=%{_prefix} LIBDIR=%{_lib} CONFIG_LTO=y STRIP=%{_bindir}/true
+%make_install PREFIX=%{_prefix} LIBDIR=%{_lib} CONFIG_CLANG=y CONFIG_LTO=y STRIP=%{_bindir}/true
 
 %files
 %{_bindir}/qjs
